@@ -12,11 +12,40 @@
 	  color: #000;
 	  font-size: small;
   }
-  body {
-	  background-color: #FFF;
-      text-align: center;
+  html, body {
+      background-color: #000;
+      width: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
+      overflow: hidden;
+  }
+  body {
+      text-align: center;
+      touch-action: manipulation;
+      overscroll-behavior: none;
+  }
+  #gameContainer {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      -webkit-user-select: none;
+      user-select: none;
+      text-align: left;
+      background: #000;
+  }
+  #MMFCanvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+      background: #000;
   }
   #bloctxt {
 	  border-left-width: 5px;
@@ -45,16 +74,43 @@
   <script src="src/Runtime.js"></script>
 </head>
 <body>
-<div style="display: inline-block; -webkit-user-select: none; text-align: left;">
+<div id="gameContainer">
     <canvas id="MMFCanvas" width="1280" height="720">
       Your browser does not support Canvas.
     </canvas>
 </div>
 <script>
+  function requestFullscreen() {
+      var docEl = document.documentElement;
+      var request = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+      if (request && !document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          try {
+              request.call(docEl);
+          } catch (e) {
+          }
+      }
+  }
+
+  function enableMobileFullscreen() {
+      var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      if (!isMobile) {
+          return;
+      }
+
+      var triggerFullscreen = function() {
+          requestFullscreen();
+      };
+
+      ["touchstart", "pointerdown", "click"].forEach(function(eventName) {
+          window.addEventListener(eventName, triggerFullscreen, { passive: true, once: true });
+      });
+  }
+
   window.addEventListener("load", windowLoaded, false);
   function windowLoaded()
   {
       document.title = "Five Nights at Christis v0.1 - Beniamin Nitu";
+      enableMobileFullscreen();
       new Runtime("MMFCanvas", "resources/FNAF1HTML5.cch");
   }
 </script>
