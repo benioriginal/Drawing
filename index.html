@@ -63,7 +63,14 @@
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Five Nights at Christis v0.1" />
+  <meta name="application-name" content="Five Nights at Christis v0.1" />
+  <meta name="theme-color" content="#000000" />
   <meta name="HandheldFriendly" content="true" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon.png" />
   <title>Five Nights at Christis v0.1</title>
   <script>
     if (!document.createElement("canvas").getContext)
@@ -80,10 +87,22 @@
     </canvas>
 </div>
 <script>
+  function isFullscreenActive() {
+      return !!(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.msFullscreenElement
+      );
+  }
+
   function requestFullscreen() {
+      if (isFullscreenActive()) {
+          return;
+      }
+
       var docEl = document.documentElement;
       var request = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
-      if (request && !document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+      if (request) {
           try {
               request.call(docEl);
           } catch (e) {
@@ -91,18 +110,13 @@
       }
   }
 
-  function enableMobileFullscreen() {
-      var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-      if (!isMobile) {
-          return;
-      }
-
+  function enableFullscreenOnInteraction() {
       var triggerFullscreen = function() {
           requestFullscreen();
       };
 
       ["touchstart", "pointerdown", "click"].forEach(function(eventName) {
-          window.addEventListener(eventName, triggerFullscreen, { passive: true, once: true });
+          window.addEventListener(eventName, triggerFullscreen, { passive: true });
       });
   }
 
@@ -110,7 +124,7 @@
   function windowLoaded()
   {
       document.title = "Five Nights at Christis v0.1 - Beniamin Nitu";
-      enableMobileFullscreen();
+      enableFullscreenOnInteraction();
       new Runtime("MMFCanvas", "resources/FNAF1HTML5.cch");
   }
 </script>
